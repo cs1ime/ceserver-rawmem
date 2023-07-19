@@ -11,11 +11,11 @@ ceserver for raw memory dump file
 Usage:
   ceserver-rawmem [OPTION...]
 
-  -f, c arg  Raw memory dump file path
+  -f, arg  Raw memory dump file path
   -p, --port arg  CEServer using port (default: 8997)
 ```
 
--f/--file parameter **only supports complete linear physical memory dump**, you can get it through [MemProcFS](https://github.com/ufrisk/MemProcFS)
+-f parameter **only supports complete linear physical memory dump**, you can get it through [MemProcFS](https://github.com/ufrisk/MemProcFS)
 
 
 
