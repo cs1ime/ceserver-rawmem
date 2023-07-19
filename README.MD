@@ -15,7 +15,7 @@ Usage:
   -p, --port arg  CEServer using port (default: 8997)
 ```
 
--f/--file parameter **only supports complete linear physical memory dump**, you can get it through [MemProcFS](https://github.com/ufrisk/MemProcFS)
+-f parameter **only supports complete linear physical memory dump**, you can get it through [MemProcFS](https://github.com/ufrisk/MemProcFS)
 
 
 
