@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.0.0)
+
+project(COMPONMENT_DMA VERSION 0.1.0 LANGUAGES C CXX)
+
+add_library(${PROJECT_NAME}
+    src/dma_memsch.cpp
+    src/dma_mmu.cpp
+    src/dma_ntutil.cpp
+    src/dma.cpp
+    src/dma_peparser.cpp
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME} PRIVATE ../dma_symbol/include)
+
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    CXX_STANDARD 17
+)
