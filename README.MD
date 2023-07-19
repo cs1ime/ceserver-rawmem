@@ -11,7 +11,7 @@ ceserver for raw memory dump file
 Usage:
   ceserver-rawmem [OPTION...]
 
-  -f, c arg  Raw memory dump file path
+  -f, arg  Raw memory dump file path
   -p, --port arg  CEServer using port (default: 8997)
 ```
 
