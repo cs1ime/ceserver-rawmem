@@ -85,7 +85,7 @@ make
 
 - [ ] Support qemu-kvm, pcileech
 
-- [ ] Write a tool of dumping apex game data
+- [ ] Make a tool of dumping apex game data
 
 - [ ] Make a qemu-kvm cheat
 
