@@ -265,6 +265,7 @@ public:
 	}
 
 private:
+	bool rw_virt_from_tlb(uptr virt, u8* pb, u32 cb,bool iswrite);
 	mmu_pagetype entryexist(uptr virt);
     std::shared_mutex smtx;
     std::unordered_map <u64, u64>mmu_tlb_4k;

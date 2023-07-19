@@ -207,8 +207,20 @@ physaddr mmu_tlb::virt2phys(uptr virt, tlb_mode mode)
     return entryget(virt);
 }
 
-bool mmu_tlb::read_virt_from_tlb(uptr virt, u8 *pb, u32 cb)
+bool mmu_tlb::rw_virt_from_tlb(uptr virt, u8 *pb, u32 cb, bool iswrite)
 {
+    auto rwphys = 
+            [&](physaddr pa, u8* pb, u32 cb)->bool
+            {
+                if(iswrite)
+                {
+                    return this->write_phys(pa,pb,cb);
+                }
+                else
+                {
+                    return this->read_phys(pa,pb,cb);
+                }
+            };
     if (cb == 0)
         return false;
     // DbgBreakPoint();
@@ -224,7 +236,7 @@ bool mmu_tlb::read_virt_from_tlb(uptr virt, u8 *pb, u32 cb)
         u64 phy = virt2phys((uptr)virt);
         if (phy != badphysaddr)
         {
-            if (!read_phys(phy, pb, cb))
+            if (!rwphys(phy, pb, cb))
                 return false;
         }
         else
@@ -241,7 +253,7 @@ bool mmu_tlb::read_virt_from_tlb(uptr virt, u8 *pb, u32 cb)
         u64 phy = virt2phys((uptr)virt);
         if (phy != badphysaddr)
         {
-            if (!read_phys(phy, pb, FirstReadSize))
+            if (!rwphys(phy, pb, FirstReadSize))
                 return false;
         }
         else
@@ -260,7 +272,7 @@ bool mmu_tlb::read_virt_from_tlb(uptr virt, u8 *pb, u32 cb)
                 phy = virt2phys((uptr)FullPageAddress);
                 if (phy != badphysaddr)
                 {
-                    if (!read_phys(phy, pDst, PAGE_SIZE))
+                    if (!rwphys(phy, pDst, PAGE_SIZE))
                         return false;
                 }
                 else
@@ -278,7 +290,7 @@ bool mmu_tlb::read_virt_from_tlb(uptr virt, u8 *pb, u32 cb)
         phy = virt2phys((uptr)EndReadPage);
         if (phy != badphysaddr)
         {
-            if (!read_phys(phy, ((pbyte)pb) + EndReadDstOffset, EndReadSize))
+            if (!rwphys(phy, ((pbyte)pb) + EndReadDstOffset, EndReadSize))
                 return false;
         }
         else
@@ -289,65 +301,13 @@ bool mmu_tlb::read_virt_from_tlb(uptr virt, u8 *pb, u32 cb)
     }
     return true;
 }
+bool mmu_tlb::read_virt_from_tlb(uptr virt, u8 *pb, u32 cb)
+{
+    return rw_virt_from_tlb(virt,pb,cb,false);
+}
 bool mmu_tlb::write_virt_from_tlb(uptr virt, u8 *pb, u32 cb)
 {
-    if (cb == 0)
-        return false;
-    // DbgBreakPoint();
-
-    u64 StartPhysicalAddress = (u64)virt;
-    u64 EndPhysicalAddress = StartPhysicalAddress + cb - 1;
-    u64 StartPhysicalAddressPage = StartPhysicalAddress & 0xFFFFFFFFFFFFF000;
-    u64 EndPhysicalAddressPage = EndPhysicalAddress & 0xFFFFFFFFFFFFF000;
-    u64 StartPFN = MmiGetPhysicalPFN(StartPhysicalAddress);
-    u64 EndPFN = MmiGetPhysicalPFN(EndPhysicalAddress);
-    u32 ThroughPages = EndPFN - StartPFN;
-    if (ThroughPages == 0)
-    {
-        u64 phy = virt2phys((uptr)virt);
-        if (phy == badphysaddr)
-            return false;
-        // memcpy(Dst, ((PUCHAR)Pending) + offset, Lenth);
-        if (!write_phys(phy, pb, cb))
-            return false;
-    }
-    else
-    {
-        u64 FirstReadPage = StartPhysicalAddressPage;
-        u32 FirstReadOffset = StartPhysicalAddress & 0x0000000000000FFF;
-        u32 FirstReadSize = PAGE_SIZE - FirstReadOffset;
-        u64 phy = virt2phys((uptr)virt);
-        if (phy == badphysaddr)
-            return false;
-        if (!write_phys(phy, pb, FirstReadSize))
-            return false;
-
-        u64 EndReadPage = EndPhysicalAddressPage;
-        u32 EndReadSize = (EndPhysicalAddress & 0x0000000000000FFF) + 1;
-        u32 EndReadDstOffset = (ThroughPages - 1) * PAGE_SIZE + FirstReadSize;
-
-        phy = virt2phys((uptr)EndReadPage);
-        if (phy == badphysaddr)
-            return false;
-        if (!write_phys(phy, ((pbyte)pb) + EndReadDstOffset, EndReadSize))
-            return false;
-
-        u32 FullPageNum = ThroughPages - 1;
-        if (FullPageNum)
-        {
-            for (u32 i = 0; i < FullPageNum; ++i)
-            {
-                u64 FullPageAddress = FirstReadPage + PAGE_SIZE + i * PAGE_SIZE;
-                pbyte pDst = (pbyte)pb + FirstReadSize + (i * PAGE_SIZE);
-                phy = virt2phys((uptr)FullPageAddress);
-                if (phy == badphysaddr)
-                    return false;
-                if (!write_phys(phy, pDst, PAGE_SIZE))
-                    return false;
-            }
-        }
-    }
-    return true;
+    return rw_virt_from_tlb(virt,pb,cb,true);
 }
 
 #define rr this->r
@@ -532,6 +492,7 @@ u64 mmu::enummem(uptr start_va, uptr end_va, std::function<bool(u64 start, u64 s
     qword pml4[0x200];
     if (!read_phys(this->get_dtb(), (pbyte)pml4, 0x1000))
         return 0;
+
 
     for (int pml4e_idx = stva.pml4e_index; pml4e_idx <= edva.pml4e_index; pml4e_idx++)
     {
