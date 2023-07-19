@@ -53,8 +53,8 @@ Require:
 
 1. CMake >= 3.20
 2. OpenSSL >= 1.1.1
-3. Clang >= 14
-4. Zlib >= 1.2.11
+3. Zlib >= 1.2.11
+4. Clang >= 14
 
 ```
 sudo apt-get update
@@ -85,7 +85,7 @@ make
 
 - [ ] Support qemu-kvm, pcileech
 
-- [ ] Write an example of dumping apex game data
+- [ ] Make a tool of dumping apex game data
 
 - [ ] Make a qemu-kvm cheat
 
