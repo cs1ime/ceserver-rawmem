@@ -54,6 +54,7 @@ Require:
 1. CMake >= 3.20
 2. OpenSSL >= 1.1.1
 3. Clang >= 14
+4. Zlib >= 1.2.11
 
 ```
 sudo apt-get update
