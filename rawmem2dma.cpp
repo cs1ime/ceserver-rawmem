@@ -66,45 +66,45 @@ namespace rawmem2dma
             m_rawmemfd = 0;
         }
     }
+    bool dma_read_physical_memory_impl(physaddr pa, u8* pb, u32 cb)
+    {
+        if (!rawmem2dma::m_mapped_addr || rawmem2dma::m_mapped_size == 0)
+        {
+            return false;
+        }
+        uint64_t realsize = pa + cb;
+        if (realsize > rawmem2dma::m_mapped_size)
+        {
+            return false;
+        }
+        if (realsize == 0)
+        {
+            return false;
+        }
+        if (pa == D_BADPHYSADDR)
+            return false;
+        memcpy(pb, pa + (unsigned char *)rawmem2dma::m_mapped_addr, cb);
+        return true;
+    }
+    bool dma_write_physical_memory_impl(physaddr pa, u8* pb, u32 cb)
+    {
+        if (!rawmem2dma::m_mapped_addr || rawmem2dma::m_mapped_size == 0)
+        {
+            return false;
+        }
+        uint64_t realsize = pa + cb;
+        if (realsize > rawmem2dma::m_mapped_size)
+        {
+            realsize = rawmem2dma::m_mapped_size;
+        }
+        if (realsize == 0)
+        {
+            return false;
+        }
+        if (pa == D_BADPHYSADDR)
+            return false;
+        return true;
+    }
 
 } // namespace rawmem2dma
 
-bool dma_read_physical_memory_impl(physaddr pa, u8* pb, u32 cb)
-{
-    if (!rawmem2dma::m_mapped_addr || rawmem2dma::m_mapped_size == 0)
-    {
-        return false;
-    }
-    uint64_t realsize = pa + cb;
-    if (realsize > rawmem2dma::m_mapped_size)
-    {
-        return false;
-    }
-    if (realsize == 0)
-    {
-        return false;
-    }
-    if (pa == D_BADPHYSADDR)
-        return false;
-    memcpy(pb, pa + (unsigned char *)rawmem2dma::m_mapped_addr, cb);
-    return true;
-}
-bool dma_write_physical_memory_impl(physaddr pa, u8* pb, u32 cb)
-{
-    if (!rawmem2dma::m_mapped_addr || rawmem2dma::m_mapped_size == 0)
-    {
-        return false;
-    }
-    uint64_t realsize = pa + cb;
-    if (realsize > rawmem2dma::m_mapped_size)
-    {
-        realsize = rawmem2dma::m_mapped_size;
-    }
-    if (realsize == 0)
-    {
-        return false;
-    }
-    if (pa == D_BADPHYSADDR)
-        return false;
-    return true;
-}

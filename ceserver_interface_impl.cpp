@@ -2,9 +2,9 @@
 #include <string.h>
 #include <string>
 #include <algorithm>
-#include "rawmem2dma.h"
-#include "dma/include/dma.h"
+#include <dma.h>
 #include <dma_symbol_impl.h>
+#include <functional>
 
 #define p1x(v1) printf(("" #v1 "=%08llX\r\n"), v1)
 #define p1d(v1) printf(("" #v1 "=%08lld\r\n"), v1)
@@ -15,19 +15,17 @@ extern bool dma_write_physical_memory_impl(physaddr pa, u8 *pb, u32 cb);
 namespace ceserver_impl
 {
     std::shared_ptr<ntfuncs> sys = nullptr;
-    bool initialize(const char *file)
+    bool initialize(
+                    std::function<bool(physaddr pa, u8 *pb, u32 cb)> _read_physical_memory,
+                    std::function<bool(physaddr pa, u8 *pb, u32 cb)> _write_physical_memory)
     {
-        if (!rawmem2dma::rawmem2dma_init(file))
-        {
-            fprintf(stderr, "rawmem2dma::rawmem2dma_init failed!\r\n");
-            return false;
-        }
+        
         auto ms_downloader =
             std::make_unique<downloader>("save", "https://msdl.microsoft.com/download/symbols/");
         if (!ms_downloader->valid())
             return false;
         auto factory = std::make_shared<dma_symbol_factory_impl>(std::move(ms_downloader));
-        auto creator = std::make_shared<ntfunc_creator>(factory, dma_read_physical_memory_impl, dma_write_physical_memory_impl);
+        auto creator = std::make_shared<ntfunc_creator>(factory, _read_physical_memory, _write_physical_memory);
         sys = creator->try_create();
         if (sys == nullptr)
         {

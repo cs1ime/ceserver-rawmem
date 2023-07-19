@@ -16,6 +16,7 @@
 #include <sys/stat.h>
 #include <sys/uio.h>
 #include <fcntl.h>
+#include "rawmem2dma.h"
 
 #define CESERVERVERSION 5
 char versionstring[] = "CHEATENGINE Network 2.2";
@@ -789,7 +790,13 @@ int main(int argc, char *argv[])
 
 	std::cout << "pid: " << getpid() << std::endl;
 
-	if (!ceserver_impl::initialize(rawmemfile.c_str()))
+	if (!rawmem2dma::rawmem2dma_init(rawmemfile.c_str()))
+    {
+        fprintf(stderr, "rawmem2dma::rawmem2dma_init failed!\r\n");
+        return false;
+    }
+
+	if (!ceserver_impl::initialize(rawmem2dma::dma_read_physical_memory_impl,rawmem2dma::dma_write_physical_memory_impl))
 	{
 		std::cerr << "ceserver_impl::initialize failed!" << std::endl;
 		exit(1);

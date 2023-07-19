@@ -3,10 +3,14 @@
 #include "ceserver_interface.h"
 #include <memory>
 #include <list>
+#include <functional>
+#include <dma_type.h>
 
 namespace ceserver_impl
 {
-    bool initialize(const char *file);
+    bool initialize(
+                    std::function<bool(physaddr pa, u8 *pb, u32 cb)> _read_physical_memory,
+                    std::function<bool(physaddr pa, u8 *pb, u32 cb)> _write_physical_memory);
     unsigned char GetPlatformABI();
     std::list<process_list_entry> TraverseProcess();
     std::list<module_list_entry> TraverseModule(uint64_t pid);
