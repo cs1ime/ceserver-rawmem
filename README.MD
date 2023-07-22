@@ -78,7 +78,7 @@ sudo apt-get install -y build-essential zlib1g-dev libssl-dev cmake clang-14 lib
 mkdir build
 cd build
 cmake .. -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14
-make
+make -j12
 ```
 
 Environment: macOS 13.4.1
