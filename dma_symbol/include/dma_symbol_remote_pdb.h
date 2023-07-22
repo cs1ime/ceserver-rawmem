@@ -8,13 +8,13 @@
 #include <map>
 #include <memory>
 
-class dma_symbol_factory_impl : public dma_symbol_factory
+class dma_symbol_factory_remote_pdb : public dma_symbol_factory
 {
 private:
     std::unique_ptr<downloader> m_pdb_downloader;
 
 public:
-    dma_symbol_factory_impl(std::unique_ptr<downloader> pdb_downloader)
+    dma_symbol_factory_remote_pdb(std::unique_ptr<downloader> pdb_downloader)
         : m_pdb_downloader(std::move(pdb_downloader))
     {
     }

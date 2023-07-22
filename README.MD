@@ -1,18 +1,20 @@
 # ceserver-rawmem 
 
-Ceserver for **cheatengine7.0** to analyze memorydump
+Ceserver for **Cheat Engine7.4** to perform DMA access to Windows system processes
 
 The system in the memory dump only supports 64-bit systems, windows10, windows11
 
 ### Instructions:
 
 ```
-ceserver for raw memory dump file
+CEServer for raw memory dump file, QEMU/KVM
 Usage:
   ceserver-rawmem [OPTION...]
 
-  -f, arg  Raw memory dump file path
-  -p, --port arg  CEServer using port (default: 8997)
+  -f, --file arg  Memory dump file name
+      --vm arg    QEMU/KVM guest name
+  -p, --port arg  CEServer port (default: 8997)
+  -h, --help      Show help
 ```
 
 -f parameter **only supports complete linear physical memory dump**, you can get it through [MemProcFS](https://github.com/ufrisk/MemProcFS)
@@ -41,7 +43,19 @@ Port forwarding for WSL
 netsh interface portproxy add v4tov4 listenport=8997 listenaddress=0.0.0.0 connectport=8997 connectaddress=xxx.xxx.xxx.xxx
 ```
 
-Open cheatengine, connect to localhost:8997
+Open Cheat Engine, connect to localhost:8997
+
+
+
+### Example for QEMU/KVM
+
+If you have a virtual machine named win10
+
+```
+./ceserver-rawmem --vm win10
+```
+
+Open Cheat Engine, connect to localhost:8997
 
 
 
@@ -51,18 +65,16 @@ Environment: Ubuntu22.04 x64
 
 Require:
 
-1. CMake >= 3.20
-2. OpenSSL >= 1.1.1
-3. Zlib >= 1.2.11
-4. Clang >= 14
+1. CMake >= 3.2.0
+2. Clang >= 14
+3. OpenSSL >= 1.1.1
+4. Zlib >= 1.2.11
+5. Boost >= 1.74
+6. Fmt >= 8.1.1
 
 ```
 sudo apt-get update
-sudo apt-get install build-essential
-sudo apt-get install zlib1g-dev
-sudo apt-get install libssl-dev
-sudo apt-get install cmake
-sudo apt-get install clang-14
+sudo apt-get install -y build-essential zlib1g-dev libssl-dev cmake clang-14 libboost-all-dev libfmt-dev
 mkdir build
 cd build
 cmake .. -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14
@@ -85,7 +97,7 @@ make
 
 - [ ] Support qemu-kvm, pcileech
 
-- [ ] Make a tool of dumping apex game data
+- [ ] Write an example of dumping apex game data
 
 - [ ] Make a qemu-kvm cheat
 

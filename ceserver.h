@@ -38,62 +38,62 @@
 #define CMD_MODULE32NEXT 23
 
 #define CMD_GETSYMBOLLISTFROMFILE 24
-#define CMD_LOADEXTENSION 25
+#define CMD_LOADEXTENSION         25
 
-#define CMD_ALLOC 26
-#define CMD_FREE 27
-#define CMD_CREATETHREAD 28
-#define CMD_LOADMODULE 29
-#define CMD_SPEEDHACK_SETSPEED 30
+#define CMD_ALLOC                   26
+#define CMD_FREE                    27
+#define CMD_CREATETHREAD            28
+#define CMD_LOADMODULE              29
+#define CMD_SPEEDHACK_SETSPEED      30
 
-#define CMD_VIRTUALQUERYEXFULL 31
-#define CMD_GETREGIONINFO 32
+#define CMD_VIRTUALQUERYEXFULL      31
+#define CMD_GETREGIONINFO           32
+#define CMD_GETABI                  33
 
-// just in case I ever get over 255 commands this value will be reserved for a secondary command list (FF 00 -  FF 01 - ... - FF FE - FF FF 01 - FF FF 02 - .....
-#define CMD_COMMANDLIST2 255
+#define CMD_AOBSCAN					200
 
-// extern char *versionstring;
+//just in case I ever get over 255 commands this value will be reserved for a secondary command list (FF 00 -  FF 01 - ... - FF FE - FF FF 01 - FF FF 02 - .....
+#define CMD_COMMANDLIST2            255
+
+
+
+
+
+//extern char *versionstring;
 
 #pragma pack(1)
-typedef struct
-{
-  int version;
-  unsigned char stringsize;
-  // append the versionstring
+typedef struct {
+	int version;
+	unsigned char stringsize;
+	//append the versionstring
 } CeVersion, *PCeVersion;
 
-typedef struct
-{
-  DWORD dwFlags;
-  DWORD th32ProcessID;
+typedef struct {
+    DWORD dwFlags;
+    DWORD th32ProcessID;
 } CeCreateToolhelp32Snapshot, *PCeCreateToolhelp32Snapshot;
 
-typedef struct
-{
-  int result;
-  int pid;
-  int processnamesize;
-  // processname
+typedef struct {
+    int result;
+    int pid;
+    int processnamesize;
+    //processname
 } CeProcessEntry, *PCeProcessEntry;
 
-typedef struct
-{
-  int result;
-  int64_t modulebase;
-  int modulesize;
-  int modulenamesize;
-  // modulename
-
+typedef struct {
+    int32_t result;
+    int64_t modulebase;
+    int32_t modulepart;
+    int32_t modulesize;
+    int32_t modulenamesize;
 } CeModuleEntry, *PCeModuleEntry;
 
-typedef struct
-{
+typedef struct {
   int handle;
   uint64_t baseaddress;
 } CeVirtualQueryExInput, *PCeVirtualQueryExInput;
 
-typedef struct
-{
+typedef struct {
   uint8_t result;
   uint32_t protection;
   uint32_t type;
@@ -101,47 +101,42 @@ typedef struct
   uint64_t size;
 } CeVirtualQueryExOutput, *PCeVirtualQueryExOutput;
 
-typedef struct
-{
+typedef struct {
   int handle;
   uint8_t flags;
 } CeVirtualQueryExFullInput, *PCeVirtualQueryExFullInput;
 
-typedef struct
-{
+typedef struct {
   uint32_t protection;
   uint32_t type;
   uint64_t baseaddress;
   uint64_t size;
 } CeVirtualQueryExFullOutput, *PCeVirtualQueryExFullOutput;
 
-typedef struct
-{
+typedef struct {
   uint32_t handle;
   uint64_t address;
   uint32_t size;
-  uint8_t compress;
+  uint8_t  compress;
 } CeReadProcessMemoryInput, *PCeReadProcessMemoryInput;
 
-typedef struct
-{
+typedef struct {
   int read;
 } CeReadProcessMemoryOutput, *PCeReadProcessMemoryOutput;
 
-typedef struct
-{
+typedef struct {
   int32_t handle;
   int64_t address;
   int32_t size;
 } CeWriteProcessMemoryInput, *PCeWriteProcessMemoryInput;
 
-typedef struct
-{
+
+typedef struct {
   int32_t written;
 } CeWriteProcessMemoryOutput, *PCeWriteProcessMemoryOutput;
 
-typedef struct
-{
+
+typedef struct {
   HANDLE hProcess;
   int tid;
   int debugreg;
@@ -150,113 +145,115 @@ typedef struct
   int bpsize;
 } CeSetBreapointInput, *PCeSetBreakpointInput;
 
-typedef struct
-{
+
+typedef struct {
   int result;
 } CeSetBreapointOutput, *PCeSetBreakpointOutput;
 
-typedef struct
-{
+typedef struct {
   HANDLE hProcess;
   uint32_t tid;
   uint32_t debugreg;
   uint32_t wasWatchpoint;
 } CeRemoveBreapointInput, *PCeRemoveBreakpointInput;
 
-typedef struct
-{
+
+typedef struct {
   int result;
 } CeRemoveBreapointOutput, *PCeRemoveBreakpointOutput;
 
-typedef struct
-{
+typedef struct {
   HANDLE hProcess;
   int tid;
 } CeSuspendThreadInput, *PCeSuspendThreadInput;
 
-typedef struct
-{
+
+typedef struct {
   int result;
 } CeSuspendThreadOutput, *PCeSuspendThreadOutput;
 
-typedef struct
-{
+typedef struct {
   HANDLE hProcess;
   int tid;
 } CeResumeThreadInput, *PCeResumeThreadInput;
 
-typedef struct
-{
+
+typedef struct {
   int result;
 } CeResumeThreadOutput, *PCeResumeThreadOutput;
 
-typedef struct
-{
+typedef struct {
   HANDLE hProcess;
   uint64_t preferedBase;
   uint32_t size;
 } CeAllocInput, *PCeAllocInput;
 
-typedef struct
-{
-  uint64_t address; // 0=fail
+
+typedef struct {
+  uint64_t address; //0=fail
 } CeAllocOutput, *PCeAllocOutput;
 
-typedef struct
-{
+typedef struct {
   HANDLE hProcess;
   uint64_t address;
   uint32_t size;
 } CeFreeInput, *PCeFreeInput;
 
-typedef struct
-{
+
+typedef struct {
   uint32_t result;
 } CeFreeOutput, *PCeFreeOutput;
 
-typedef struct
-{
+typedef struct {
   HANDLE hProcess;
   uint64_t startaddress;
   uint64_t parameter;
 } CeCreateThreadInput, *PCeCreateThreadInput;
 
-typedef struct
-{
+
+typedef struct {
   HANDLE threadhandle;
 } CeCreateThreadOutput, *PCeCreateThreadOutput;
 
-typedef struct
-{
+typedef struct {
   HANDLE hProcess;
   uint32_t modulepathlength;
-  // modulepath
+  //modulepath
 } CeLoadModuleInput, *PCeLoadModuleInput;
 
-typedef struct
-{
+
+typedef struct {
   uint32_t result;
 } CeLoadModuleOutput, *PCeLoadModuleOutput;
 
-typedef struct
-{
+
+typedef struct {
   HANDLE hProcess;
   float speed;
 } CeSpeedhackSetSpeedInput, *PCeSpeedhackSetSpeedInput;
 
-typedef struct
-{
+
+typedef struct {
   uint32_t result;
 } CeSpeedhackSetSpeedOutput, *PCeSpeedhackSetSpeedOutput;
 
+typedef struct {
+	HANDLE hProcess;
+	uint64_t start;
+	uint64_t end;
+	int inc;
+	int protection;
+	int scansize;
+} CeAobScanInput, * PCeAobScanInput;
 #pragma pack()
 
-ssize_t sendall(int s, void *buf, size_t size, int flags);
-ssize_t recvall(int s, void *buf, size_t size, int flags);
+ssize_t sendall (int s, void *buf, size_t size, int flags);
+ssize_t recvall (int s, void *buf, size_t size, int flags);
 int DispatchCommand(int currentsocket, unsigned char command);
 int CheckForAndDispatchCommand(int currentsocket);
 
-// If you compile the shared library version, please uncomment it.
-// #define SHARED_LIBRARY
+#if BUILD_OPTION == 1
+  #define SHARED_LIBRARY
+#endif
 
 #endif /* CESERVER_H_ */

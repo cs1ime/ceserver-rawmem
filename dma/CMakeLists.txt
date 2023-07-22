@@ -9,9 +9,8 @@ add_library(${PROJECT_NAME}
     src/dma.cpp
     src/dma_peparser.cpp
 )
+target_include_directories(${PROJECT_NAME} PUBLIC include)
 
-target_include_directories(${PROJECT_NAME} PRIVATE include)
-target_include_directories(${PROJECT_NAME} PRIVATE ../dma_symbol/include)
 
 set_target_properties(
     ${PROJECT_NAME}

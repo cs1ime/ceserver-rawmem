@@ -1,13 +1,12 @@
 add_library(COMPONMENT_PDB
 downloader.cpp
-dma_symbol_impl.cpp
+dma_symbol_remote_pdb.cpp
 ExampleMemoryMappedFile.cpp
 pdb_helper.cpp
 pdb_parser.cpp
 )
 
-target_include_directories(COMPONMENT_PDB PRIVATE ../include)
-target_include_directories(COMPONMENT_PDB PRIVATE ../../dma/include)
+target_include_directories(COMPONMENT_PDB PUBLIC ../include)
 
 set_target_properties(
     COMPONMENT_PDB
@@ -25,4 +24,5 @@ target_link_libraries(
     httplib
     OpenSSL::SSL
     OpenSSL::Crypto
+    COMPONMENT_DMA
 )

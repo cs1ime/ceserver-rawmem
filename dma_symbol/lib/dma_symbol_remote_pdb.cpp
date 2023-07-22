@@ -7,7 +7,7 @@
 #include <sstream>
 #include <vector>
 #include "downloader.h"
-#include "../include/dma_symbol_impl.h"
+#include "../include/dma_symbol_remote_pdb.h"
 
 class dma_symbol_interface_impl : public dma_symbol_interface
 {
@@ -57,7 +57,7 @@ dma_symbol_interface_impl::get_enum(const std::map<std::string, std::set<std::st
 }
 
 std::shared_ptr<dma_symbol_interface>
-dma_symbol_factory_impl::create_interface(const std::string &name, const std::string &guid, uint32_t &age)
+dma_symbol_factory_remote_pdb::create_interface(const std::string &name, const std::string &guid, uint32_t &age)
 {
     if (!m_pdb_downloader->download(name, guid, age))
     {
