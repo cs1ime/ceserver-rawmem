@@ -1,6 +1,6 @@
 # ceserver-rawmem 
 
-CEServer for **Cheat Engine7.4** to perform DMA access to Windows system processes
+CEServer for **Cheat Engine7.4** to perform DMA access to Windows processes
 
 The system in the memory dump only supports 64-bit systems, windows10, windows11
 
